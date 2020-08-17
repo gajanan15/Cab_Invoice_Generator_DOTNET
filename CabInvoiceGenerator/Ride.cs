@@ -9,6 +9,7 @@ namespace CabInvoiceGenerator
     /// </summary>
     public class Ride
     {
+        public RideTypeEnum.RideType rideType;
         public double Distance;
         public int Time;
 
@@ -16,10 +17,12 @@ namespace CabInvoiceGenerator
         /// Initializes a new instance of the <see cref="Ride"/> class.
         /// Create Constructor.
         /// </summary>
+        /// <param name="rideType"></param>
         /// <param name="distance"></param>
         /// <param name="time"></param>
-        public Ride(double distance, int time)
+        public Ride(RideTypeEnum.RideType rideType, double distance, int time)
         {
+            this.rideType = rideType;
             this.Distance = distance;
             this.Time = time;
         }
