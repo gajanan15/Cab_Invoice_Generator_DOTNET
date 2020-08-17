@@ -44,7 +44,18 @@ namespace CabInvoiceGeneratorTest
             double distance = 0.1;
             int time = 1;
             double fare = this.cabInvoiceGenerator.CalculateFare(distance, time);
-            Assert.AreEqual(5.0d, fare);
+            Assert.AreEqual(5, fare);
+        }
+
+        /// <summary>
+        /// Craete Test For Calculate Aggregate Of Total Fare.
+        /// </summary>
+        [Test]
+        public void GivenMultipleRides_ShouldReturnAggregateTotalFare()
+        {
+            Ride[] ride = { new Ride(2.0, 5), new Ride(2.0, 5) };
+            double fare = this.cabInvoiceGenerator.AddRide(ride);
+            Assert.AreEqual(25, fare);
         }
     }
 }
