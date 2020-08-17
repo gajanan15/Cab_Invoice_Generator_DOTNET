@@ -14,6 +14,12 @@ namespace CabInvoiceGenerator
         private static readonly double MINIMUMCOSTPERKILOMETER = 10.0;
         private static readonly int COSTPERTIME = 1;
         private static readonly double MINIMUMFARE = 5.0;
+        private RideRepository rideRepository;
+
+        public CabInvoiceGenerator()
+        {
+            this.rideRepository = new RideRepository();
+        }
 
         /// <summary>
         /// Create Calculate Fare Method.
@@ -41,6 +47,16 @@ namespace CabInvoiceGenerator
             }
 
             return new InvoiceSummary(rides.Length, totalFare);
+        }
+
+        public void AddRide(string userId, Ride[] rides)
+        {
+            this.rideRepository.AddRide(userId, rides);
+        }
+
+        public InvoiceSummary GetInvoiceSummary(string userID)
+        {
+           return this.AddRide(this.rideRepository.GetRides(userID));
         }
     }
 }
