@@ -5,17 +5,19 @@
 namespace CabInvoiceGenerator
 {
     using System;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Create Cab Invoice Generator Class.
     /// </summary>
     public class CabInvoiceGenerator
     {
-        public static double MINIMUMCOSTPERKILOMETER = 10.0;
-        public static int COSTPERTIME = 1;
-        public static double MINIMUMFARE = 5.0;
+        public static double MINIMUM_COST_PER_KILOMETER = 10.0;
+        public static int COST_PER_TIME = 1;
+        public static double MINIMUM_FARE = 5.0;
         private RideRepository rideRepository;
         private RideTypeEnum type = new RideTypeEnum();
+        private Regex userIDPattern = new Regex(@"^((?=[^@|#|&|%|$]*[@|&|#|%|$][^@|#|&|%|$]*$)*(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9#@$?]{8,})$");
 
         public CabInvoiceGenerator()
         {
@@ -32,16 +34,16 @@ namespace CabInvoiceGenerator
         public double CalculateFare(RideTypeEnum.RideType rideType, double distance, int time)
         {
             this.SetValue(rideType);
-            double premiumTotalFare = (distance * MINIMUMCOSTPERKILOMETER) + (time * COSTPERTIME);
-            return Math.Max(premiumTotalFare, MINIMUMFARE);
+            double premiumTotalFare = (distance * MINIMUM_COST_PER_KILOMETER) + (time * COST_PER_TIME);
+            return Math.Max(premiumTotalFare, MINIMUM_FARE);
         }
 
         public void SetValue(RideTypeEnum.RideType rideType)
         {
             RideTypeEnum ride = this.type.GetRideValue(rideType);
-            MINIMUMCOSTPERKILOMETER = ride.costPerKm;
-            COSTPERTIME = ride.costPerMin;
-            MINIMUMFARE = ride.minimumFare;
+            MINIMUM_COST_PER_KILOMETER = ride.costPerKm;
+            COST_PER_TIME = ride.costPerMin;
+            MINIMUM_FARE = ride.minimumFare;
         }
 
         /// <summary>
@@ -63,7 +65,14 @@ namespace CabInvoiceGenerator
 
         public void AddRide(string userId, Ride[] rides)
         {
-            this.rideRepository.AddRide(userId, rides);
+            if (this.userIDPattern.IsMatch(userId))
+            {
+                this.rideRepository.AddRide(userId, rides);
+            }
+            else
+            {
+                throw new CustomException("Invalid UserID", CustomException.ExceptionType.INVALID_UERID);
+            }
         }
 
         public InvoiceSummary GetInvoiceSummary(RideTypeEnum.RideType type, string userID)
